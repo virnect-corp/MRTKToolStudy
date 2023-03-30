@@ -49,15 +49,15 @@ Canvas 안의 TMP_InputField만 테스트 해봤습니다. 다른 Text컴포넌�
 
 ### 개선 예정
 1. 키보드를 용도에 맞게 분류할 예정.
-|용도|요약
-|-|-
-|2D|Canvas Screen -> Overlay    : UI Local 포인트 그대로 활용.
-|3D|Canvas Screen -> WorldSpace : UI Local 공간변환
-|3DMesh|
+|용도  |요약
+|-     |-
+|2D    |Canvas Screen -> Overlay    : Text Char Local 포인트 그대로 활용.
+|3D    |Canvas Screen -> WorldSpace : Text Char Local -> 3D 공간변환
+|3DMesh| Text Char Local -> 3D 공간변환
 
-2. keyInputEvent 게산 수정예정.
-    현재 코루틴에서 글자변경 + CusorIndex까지 같이 돌고 있음.
-    두 기능을 분리하고 변경시에 계산하도록 수정 할 에정.
+2. keyInputEvent 계산 수정예정.
+    현재 코루틴에서 글자변경 + CusorIndex까지 같이 돌고 있으므로 두 기능을 분리
+    변경시에만 계산하도록 수정할 예정.
 
 
 
