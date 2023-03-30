@@ -1,0 +1,19 @@
+{
+    "name": "com.virnect.custominputsystem.keyboard",
+    "version": "0.1.16",
+    "displayName": "CustomKeyboard",
+    "description": "MRTK키보드 대용품 입니다.",
+    "unity": "2020.3",
+    "keywords": [
+        "UI"
+    ],
+    "author": {
+        "name": "Virnect",
+        "email": "jh.jo@virnect.com",
+        "url": "https://virnect.com/"
+    },
+    "dependencies": {},
+    "publishConfig": {
+        "registry": "http://192.168.0.210:4873"
+    }
+}
