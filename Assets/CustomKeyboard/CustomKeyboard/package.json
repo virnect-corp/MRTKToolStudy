@@ -1,6 +1,6 @@
 {
     "name": "com.virnect.custominputsystem.keyboard",
-    "version": "0.1.16",
+    "version": "0.1.18",
     "displayName": "CustomKeyboard",
     "description": "MRTK키보드 대용품 입니다.",
     "unity": "2020.3",

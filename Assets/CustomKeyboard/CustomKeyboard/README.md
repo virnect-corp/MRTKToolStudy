@@ -1,22 +1,56 @@
 [위로](../../README.md)
 ###  사용방법
+1. package에서 커스텀 키보드를 Asset으로 이동시킨다(버그 수정 예정....)
 1. Canvas안쪽의 TMP_InputField 컴포넌트에 SystemKeyboardCustom 추가한다.
-2. TMP_InputField 컴포넌트에 위치한 Recttransofrm Pivot.x 의 위치를 변경하여 커서 위치를 조절한다.
-3. 
+1. TMP_InputField 컴포넌트에 위치한 Recttransofrm Pivot.x 의 위치를 변경하여 커서 위치를 조절한다.
 ※ 현재는 UWP환경에서 
 Canvas 안의 TMP_InputField만 테스트 해봤습니다. 다른 Text컴포넌트는 요청 및 필요시 추가할 생각 입니다.
 
-### 스크립트 플로우 요약
-
+### Activity Diagram
 ```plantuml
-    :키보드 오픈;
-    card Update{
-        if(키보드 입력) then (true)
-        :text Component Update;
-        :커서 위치 업데이트;
-        endif
-        :키보드 상태 체크;
-    }
+    start
+    :==ComponentInit()
+    NearInteractionTouchableUnityUI 추가
+    inputFieldHeight wjddml
+    interactable.Profiles 세팅
+    mixedRealityKeyboard 키보드 컴포넌트 할당
+    커서업데이트;
+
+    :==EventInit()
+    키보드 오픈시 커서애니메이션 Coroutine 시작
+    키보드 오픈시 텍스트 입력체크 Coroutine 시작
+    키보드 오픈시 onShowKeyboard 
+    키보드 숨길 때 onHideKeyboard<string> 호출
+    UI Onclick, Touch이벤트 등록;
+        
+    if(==mixedRealityKeyboard.OnShowKeyboard 
+    키보드 오픈)
+    split 
+        while(BlinkCaret반복)
+            :커서깜박깜박;
+        end while
+    split again
+
+        while(TextUpdateCheck반복)
+            if(키보드보이는가) then (true)
+                :이전 텍스트에 글 넣고
+                Text에 키보드 글자 넣고
+                CaretIndex갱신
+                키보드 빈값 체크하기.;
+            else (false)
+                :커서깜박이는 애님중지
+                Caret 비활성화
+                키보드 숨기기
+                Text에 바로 전 텍스트 입력
+                텍스트 입력체크 반복중지;
+            endif 
+        end while
+    end split 
+    
+    endif
+
+
+    
 ```
 ### 속성 및 함수 명세
 
@@ -46,6 +80,7 @@ Canvas 안의 TMP_InputField만 테스트 해봤습니다. 다른 Text컴포넌�
 |OpenSystemKeyboard| 키보드 열기.
 |UpdateCaret       | 커서 위치 조정함수.
 |BlinkCaret        | 깜박이는 애니메이션
+|ClearText         | 입력된 텍스트 빈값으로
 
 ### 개선 예정
 1. 키보드를 용도에 맞게 분류할 예정.

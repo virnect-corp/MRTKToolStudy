@@ -75,7 +75,7 @@ namespace CustomInputSystem.Keyboard
         [SerializeField]
         private UnityEvent onShowKeyboard;
         [SerializeField]
-        private UnityEvent onHideKeyboard;
+        private UnityEvent<string> onHideKeyboard;
         private MixedRealityKeyboard mixedRealityKeyboard;
         GameObject caretPrefabs;
         Coroutine blinkCaretAnim;
@@ -185,11 +185,12 @@ namespace CustomInputSystem.Keyboard
 #region Initialize
         void ComponentInit()
         {
-            if( GetComponentInParent<Canvas>() &&
-                GetComponentInParent<Canvas>().rootCanvas && 
-                GetComponentInParent<Canvas>().rootCanvas.gameObject.GetComponent<NearInteractionTouchableUnityUI>() == false)
+            var parentCanvas = GetComponentInParent<Canvas>();
+            if( parentCanvas &&
+                parentCanvas.rootCanvas && 
+                parentCanvas.rootCanvas.gameObject.GetComponent<NearInteractionTouchableUnityUI>() == false)
             {
-                GetComponentInParent<Canvas>().rootCanvas.gameObject.AddComponent<NearInteractionTouchableUnityUI>();
+                parentCanvas.rootCanvas.gameObject.AddComponent<NearInteractionTouchableUnityUI>();
             }
 
             inputFieldHeight = InputField.textComponent.GetComponent<RectTransform>().rect.height;
@@ -201,17 +202,21 @@ namespace CustomInputSystem.Keyboard
             RectTransform rect = InputField.textComponent.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0,0);
             rect.anchorMax = new Vector2(1,1);
-            // rect.pivot = new Vector2(0.0f ,0.5f);
+            // rect.pivot = new Vector2(0.0f ,0.5f); 이건 mrtk에서 pivot 조금씩 달라서 픽스하는건 우선 포기 개선사항.
             var interactable = GetComponent<Interactable>();
-            if(interactable.Profiles[0].Target == null)
+            var profile = interactable.Profiles;
+            if(profile.Count > 0)
             {
-                interactable.Profiles[0].Target = gameObject;
-            }
-            if(interactable.Profiles[0].Themes == null)
-            {
-                List<Theme> themeList = new List<Theme>();
-                themeList.Add(Resources.Load<Microsoft.MixedReality.Toolkit.UI.Theme>("InteratableThema"));
-                interactable.Profiles[0].Themes = themeList;
+                if(profile[0].Target == null)
+                {
+                    profile[0].Target = gameObject;
+                }
+                if(profile[0].Themes == null)
+                {
+                    List<Theme> themeList = new List<Theme>();
+                    themeList.Add(Resources.Load<Microsoft.MixedReality.Toolkit.UI.Theme>("InteratableThema"));
+                    profile[0].Themes = themeList;
+                }
             }
             if(gameObject.GetComponent<MixedRealityKeyboard>()==null)
             {
@@ -232,6 +237,7 @@ namespace CustomInputSystem.Keyboard
                         testUpdateCoroutine = StartCoroutine(TextUpdateCheck());
                         blinkCaretAnim = StartCoroutine(BlinkCaret());
                         onShowKeyboard?.Invoke();
+                        UpdateCaret();
                     }
                 });
             }
@@ -239,14 +245,13 @@ namespace CustomInputSystem.Keyboard
             {
                 mixedRealityKeyboard.OnHideKeyboard.AddListener(() => 
                 {
-                    onHideKeyboard?.Invoke();
+                    onHideKeyboard?.Invoke(Text);
                 });
             }
             var interactable = GetComponent<Interactable>();
             interactable.OnClick.AddListener(() => OpenSystemKeyboard());
             var interactableOnTouchReceiver = interactable.AddReceiver<InteractableOnTouchReceiver>();
             interactableOnTouchReceiver.OnTouchEnd.AddListener(() => OpenSystemKeyboard());
-    
 #endif
         }
 #endregion Initialize
@@ -288,7 +293,6 @@ namespace CustomInputSystem.Keyboard
                         blinkCaretAnim = null;
                         Caret.gameObject.SetActive(false);
                         mixedRealityKeyboard.HideKeyboard();
-                        mixedRealityKeyboard.DisableUIInteractionWhenTyping = false;
                         Text = prevText;
                     }
                     StopCoroutine(testUpdateCoroutine);
