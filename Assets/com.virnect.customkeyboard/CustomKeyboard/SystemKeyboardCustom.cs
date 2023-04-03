@@ -171,10 +171,19 @@ namespace CustomInputSystem.Keyboard
     }
 #endregion Property 
 #region MonoBehaviour Implementation
-        void Start()
-        {
+        private void OnEnable() {
+            if(gameObject.GetComponent<MixedRealityKeyboard>()==null)
+            {
+                mixedRealityKeyboard = gameObject.AddComponent<MixedRealityKeyboard>();     
+            }
             ComponentInit();
             EventInit();
+        }
+        private void OnDisable() {
+            if(gameObject.GetComponent<MixedRealityKeyboard>()!=null)
+            {
+                Destroy(gameObject.GetComponent<MixedRealityKeyboard>());
+            }
         }
 #if UNITY_EDITOR
         void Update()
@@ -219,10 +228,6 @@ namespace CustomInputSystem.Keyboard
                     themeList.Add(Resources.Load<Microsoft.MixedReality.Toolkit.UI.Theme>("InteratableThema"));
                     profile[0].Themes = themeList;
                 }
-            }
-            if(gameObject.GetComponent<MixedRealityKeyboard>()==null)
-            {
-                mixedRealityKeyboard = gameObject.AddComponent<MixedRealityKeyboard>();     
             }
             mixedRealityKeyboard.DisableUIInteractionWhenTyping = false;
 #endif
