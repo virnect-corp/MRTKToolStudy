@@ -40,7 +40,7 @@ namespace CustomInputSystem.Keyboard
     }
     void CursorChecking(bool value)
     {
-        Debug.Log($"CursorChecking : {value}");
+        // Debug.Log($"CursorChecking : {value}");
         if(value == true && blinkCaretAnim==null)
         {
             InputField.interactable = false;
@@ -204,7 +204,7 @@ namespace CustomInputSystem.Keyboard
             rect.anchorMin = new Vector2(0,0);
             rect.anchorMax = new Vector2(1,1);
             // rect.pivot = new Vector2(0.0f ,0.5f); 이건 mrtk에서 pivot 조금씩 달라서 픽스하는건 우선 포기 개선사항.
-            cursorDepth = rect.GetComponent<RectTransform>().anchoredPosition3D.z;
+            cursorDepth = rect.GetComponent<RectTransform>().localPosition.z;
             var interactable = GetComponent<Interactable>();
             var profile = interactable.Profiles;
             if(profile.Count > 0)
