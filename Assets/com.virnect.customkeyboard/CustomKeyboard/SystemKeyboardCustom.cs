@@ -82,6 +82,7 @@ namespace CustomInputSystem.Keyboard
         Coroutine testUpdateCoroutine;
         float inputFieldHeight;
         string prevText;
+        float cursorDepth;
 #endregion Attribute
 #region Property 
     private TMP_InputField inputField = null;
@@ -117,7 +118,7 @@ namespace CustomInputSystem.Keyboard
                 }
                 caret = Instantiate(caretPrefabs, InputField.textComponent.transform).transform;
                 RectTransform rect = caret.GetComponent<RectTransform>();
-                rect.anchoredPosition3D = Vector3.zero;
+                rect.anchoredPosition3D = new Vector3(0,0,cursorDepth);
                 rect.localRotation = Quaternion.identity;
                 rect.localScale = Vector3.one;
                 rect.sizeDelta = new Vector2(rect.sizeDelta.x, inputFieldHeight * 0.9f);
@@ -203,6 +204,7 @@ namespace CustomInputSystem.Keyboard
             rect.anchorMin = new Vector2(0,0);
             rect.anchorMax = new Vector2(1,1);
             // rect.pivot = new Vector2(0.0f ,0.5f); 이건 mrtk에서 pivot 조금씩 달라서 픽스하는건 우선 포기 개선사항.
+            cursorDepth = rect.GetComponent<RectTransform>().anchoredPosition3D.z;
             var interactable = GetComponent<Interactable>();
             var profile = interactable.Profiles;
             if(profile.Count > 0)
@@ -354,7 +356,7 @@ namespace CustomInputSystem.Keyboard
                 RectTransform viewPort = InputField.textViewport.GetComponent<RectTransform>();
                 caretPosition.x -= (captionRect.rect.width * 0.5f);
                 caretPosition.y = -inputFieldHeight * .1f;
-                caretPosition.z = 0.0f;
+                caretPosition.z = cursorDepth;
                 var worldPosition = InputField.transform.TransformPoint(caretPosition);
                 Caret.transform.position = worldPosition;
             }
